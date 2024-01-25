@@ -2,6 +2,7 @@ const express = require("express");
 const dotenv = require("dotenv");
 dotenv.config();
 const cors = require("cors");
+const nodemailer = require("nodemailer")
 
 const app = express();
 app.use(cors({ origin: true, credentials: true }));
@@ -9,7 +10,7 @@ app.use(express.json());
 
 
 
-app.post('/email', async(req, res) => {
+app.post('/email', async (req, res) => {
     const { name, email, message } = req.body
     console.log(req.body)
     try {
@@ -28,18 +29,26 @@ app.post('/email', async(req, res) => {
         // send mail with defined transport object 
         let info = await transporter.sendMail({
             from: process.env.USER,// sender address 
-            to: "ysonu1071@gmail.com",// list of receivers 
+            to: "spclasses4s@gmail.com",// list of receivers 
             subject: "Portfolio contact us",// subject line 
-            text: `Name: ${name} Email: ${email} Message: ${message}`,// plain text body 
+            // text: `Name: ${name} Email: ${email} Message: ${message}`,// plain text body s
+            html: `<div>
+                <h6>Name: ${name} </h6>
+                <h6>Email: ${email} </h6>
+                <h6>Message: ${message} </h6>
+            </div>`
         });
 
-        console.log()
+        console.log(info, "this is info")
+        res.status(200).json({ success: true, message: "Email send successfully" })
     } catch (error) {
-
+        console.log("Error: ", error)
+        res.status(200).json({ success: false, message: error.message })
     }
-    res.status(200).json({ success: true })
+
 })
 
 
 
 app.listen(8000, () => console.log("Server is running at port 8000"));
+
